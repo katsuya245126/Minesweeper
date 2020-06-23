@@ -1,3 +1,5 @@
 class Board
-  def initialize end
+  def initialize
+    @board = Array.new(9) { Array.new(9) }
+  end
 end
