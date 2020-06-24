@@ -5,7 +5,7 @@ class Tile
     @revealed = false
   end
 
-  def bombed?
+  def bomb?
     bomb
   end
 
