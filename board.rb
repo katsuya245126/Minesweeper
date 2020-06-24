@@ -30,4 +30,21 @@ class Board
 
     bombed_board
   end
+
+  def render
+    puts
+    puts "  #{(0..8).to_a.join("  ")}"
+    board.each_with_index do |row, idx|
+      print "#{idx}"
+      row.each do |tile|
+        print " #{tile} "
+      end
+      puts
+    end
+    puts
+  end
+
+  private
+
+  attr_reader :board
 end
