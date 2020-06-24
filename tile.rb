@@ -21,6 +21,16 @@ class Tile
     @revealed = true
   end
 
+  def to_s
+    if flagged?
+      'F'
+    elsif !revealed?
+      '*'
+    else
+      ' '
+    end
+  end
+
   private
 
   attr_reader :bomb, :flagged, :revealed
