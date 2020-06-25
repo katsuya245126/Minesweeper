@@ -33,6 +33,16 @@ class Tile
     @revealed = true
   end
 
+  def to_s
+    if flagged?
+      'F'
+    elsif revealed?
+      fringe != 0 ? fringe.to_s : '_'
+    else
+      '*'
+    end
+  end
+
   def neighbor_bomb_count(board)
     my_pos = find_my_pos(board)
     neighbor_idx = get_neighbor_idx(my_pos)
@@ -42,6 +52,10 @@ class Tile
 
     @fringe = bomb_count
   end
+
+  private
+
+  attr_reader :bomb, :flagged, :revealed, :fringe
 
   def find_my_pos(board)
     board.board.each_with_index do |row, y|
@@ -58,18 +72,4 @@ class Tile
       [y + my_y, x + my_x]
     end
   end
-
-  def to_s
-    if flagged?
-      'F'
-    elsif revealed?
-      fringe != 0 ? fringe.to_s : '_'
-    else
-      '*'
-    end
-  end
-
-  private
-
-  attr_reader :bomb, :flagged, :revealed, :fringe
 end
