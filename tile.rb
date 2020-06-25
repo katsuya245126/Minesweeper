@@ -1,4 +1,6 @@
 class Tile
+  attr_accessor :neighbor_bombs
+
   def initialize(bomb)
     @bomb = bomb
     @flagged = false
@@ -26,7 +28,9 @@ class Tile
     if flagged?
       'F'
     elsif revealed?
-      fringe != 0 ? fringe.to_s : '_'
+      return 'B' if bomb?
+
+      neighbor_bombs != 0 ? neighbor_bombs.to_s : '_'
     else
       '*'
     end
@@ -34,5 +38,5 @@ class Tile
 
   private
 
-  attr_reader :bomb, :flagged, :revealed, :fringe
+  attr_reader :bomb, :flagged, :revealed
 end

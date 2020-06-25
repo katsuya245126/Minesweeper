@@ -26,6 +26,7 @@ class Board
 
   def initialize
     @board = place_bomb(Board.empty_board)
+    set_bomb_counts
   end
 
   def get_tile(pos)
@@ -46,11 +47,19 @@ class Board
     puts
   end
 
-  def reveal(pos)
+  def reveal(my_pos)
     nil
   end
 
   private
+
+  def set_bomb_counts
+    board.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        tile.neighbor_bombs = neighbor_bomb_count([y, x])
+      end
+    end
+  end
 
   def neighbor_bomb_count(my_pos)
     neighbor_idx = get_neighbor_idx(my_pos)
@@ -65,11 +74,18 @@ class Board
   end
 
   def get_neighbor_idx(my_pos)
-    NEIGHBOR_POS.dup.map do |pos|
+    neighbor_idx = NEIGHBOR_POS.dup.map do |pos|
       y, x = pos
       my_y, my_x = my_pos
       [y + my_y, x + my_x]
     end
+
+    neighbor_idx.select { |pos| valid_pos?(pos) }
+  end
+
+  def valid_pos?(pos)
+    y, x = pos
+    y.between?(0, 8) && x.between?(0, 8)
   end
 
   def place_bomb(board, num = 9)
@@ -87,6 +103,4 @@ class Board
 
     bombed_board
   end
-
-  
 end
