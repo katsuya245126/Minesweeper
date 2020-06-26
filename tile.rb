@@ -30,7 +30,7 @@ class Tile
     elsif revealed?
       return 'B' if bomb?
 
-      neighbor_bombs != 0 ? neighbor_bombs.to_s : '_'
+      neighbor_bombs != 0 ? neighbor_bombs.to_s : ' '
     else
       '*'
     end

@@ -35,23 +35,27 @@ class Board
   end
 
   def render
+    line = '  ------------------------------------'
     puts
-    puts "  #{(0..8).to_a.join('  ')}"
+    puts "   #{(0..8).to_a.join('   ')}"
+    puts line
     board.each_with_index do |row, idx|
       print idx.to_s
       row.each do |tile|
-        print " #{tile} "
+        print "| #{tile} "
       end
+      print '|'
       puts
+      puts line
     end
     puts
   end
 
-  def reveal(my_pos)
-    nil
-  end
-
   private
+
+  def clean_square?(tile)
+    tile.to_s == ' '
+  end
 
   def set_bomb_counts
     board.each_with_index do |row, y|
@@ -62,7 +66,7 @@ class Board
   end
 
   def neighbor_bomb_count(my_pos)
-    neighbor_idx = get_neighbor_idx(my_pos)
+    neighbor_idx = neighbor_index(my_pos)
     bomb_count = 0
 
     neighbor_idx.each do |pos|
@@ -73,7 +77,7 @@ class Board
     bomb_count
   end
 
-  def get_neighbor_idx(my_pos)
+  def neighbor_index(my_pos)
     neighbor_idx = NEIGHBOR_POS.dup.map do |pos|
       y, x = pos
       my_y, my_x = my_pos
@@ -88,7 +92,7 @@ class Board
     y.between?(0, 8) && x.between?(0, 8)
   end
 
-  def place_bomb(board, num = 9)
+  def place_bomb(board, num = 6)
     remaining_bombs = num
     bombed_board = board
 
