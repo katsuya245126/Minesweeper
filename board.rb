@@ -66,8 +66,20 @@ class Board
 
   private
 
-  def clean_square?(tile)
-    tile.to_s == ' '
+  def place_bomb(board, num = 9)
+    remaining_bombs = num
+    bombed_board = board
+
+    until remaining_bombs.zero?
+      y = rand(0..8)
+      x = rand(0..8)
+      next if board[y][x].bomb?
+
+      board[y][x] = Tile.new(true)
+      remaining_bombs -= 1
+    end
+
+    bombed_board
   end
 
   def set_bomb_counts
@@ -90,6 +102,15 @@ class Board
     bomb_count
   end
 
+  def neighbor_tiles(my_pos)
+    neighbor_idx = neighbor_index(my_pos)
+
+    neighbor_idx.map do |pos|
+      y, x = pos
+      board[y][x]
+    end
+  end
+
   def neighbor_index(my_pos)
     neighbor_idx = NEIGHBOR_POS.dup.map do |pos|
       y, x = pos
@@ -105,28 +126,7 @@ class Board
     y.between?(0, 8) && x.between?(0, 8)
   end
 
-  def neighbor_tiles(my_pos)
-    neighbor_idx = neighbor_index(my_pos)
-
-    neighbor_idx.map do |pos|
-      y, x = pos
-      board[y][x]
-    end
-  end
-
-  def place_bomb(board, num = 9)
-    remaining_bombs = num
-    bombed_board = board
-
-    until remaining_bombs.zero?
-      y = rand(0..8)
-      x = rand(0..8)
-      next if board[y][x].bomb?
-
-      board[y][x] = Tile.new(true)
-      remaining_bombs -= 1
-    end
-
-    bombed_board
+  def clean_square?(tile)
+    tile.to_s == ' '
   end
 end
