@@ -1,6 +1,7 @@
 require_relative 'board.rb'
 require_relative 'player.rb'
 
+# Main
 class Minesweeper
   def initialize
     @board = Board.new
@@ -17,6 +18,8 @@ class Minesweeper
         next
       end
 
+      board.reveal(input)
+      refresh
       break
     end
   end
@@ -26,7 +29,7 @@ class Minesweeper
   attr_reader :board, :player
 
   def input_error
-    puts 'Invalid input! Make sure to enter a digit between 0-8 with a comma between.'
+    puts 'Invalid input! Make sure to enter two digits between 0-8 with a comma in-between.'
     print 'Press Enter to continue...'
     gets
   end
