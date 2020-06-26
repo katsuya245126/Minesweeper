@@ -70,6 +70,12 @@ class Board
     end
   end
 
+  def lost?
+    board.any? do |row|
+      row.any? { |tile| tile.bomb? && tile.revealed? }
+    end
+  end
+
   private
 
   def place_bomb(board, num = 9)
