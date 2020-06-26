@@ -64,6 +64,12 @@ class Board
     clean_squares.all? { |pos| reveal(pos) }
   end
 
+  def win?
+    board.all? do |row|
+      row.all? { |tile| tile.revealed? || tile.bomb? }
+    end
+  end
+
   private
 
   def place_bomb(board, num = 9)
