@@ -51,6 +51,23 @@ class Board
     puts
   end
 
+  def reveal(my_pos)
+    return false if get_tile(my_pos).bomb?
+    return true if neighbor_tiles(my_pos).all? { |tile| tile.revealed? || tile.bomb? }
+
+    get_tile(my_pos).reveal
+    clean_squares = []
+    neighbor_idx = neighbor_index(my_pos)
+
+    neighbor_idx.each do |pos|
+      tile = get_tile(pos)
+      tile.reveal unless tile.bomb?
+      clean_squares << pos if clean_square?(tile)
+    end
+
+    clean_squares.all? { |pos| reveal(pos) }
+  end
+
   private
 
   def clean_square?(tile)
@@ -92,7 +109,16 @@ class Board
     y.between?(0, 8) && x.between?(0, 8)
   end
 
-  def place_bomb(board, num = 6)
+  def neighbor_tiles(my_pos)
+    neighbor_idx = neighbor_index(my_pos)
+
+    neighbor_idx.map do |pos|
+      y, x = pos
+      board[y][x]
+    end
+  end
+
+  def place_bomb(board, num = 9)
     remaining_bombs = num
     bombed_board = board
 

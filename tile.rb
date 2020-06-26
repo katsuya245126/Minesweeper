@@ -4,7 +4,7 @@ class Tile
   def initialize(bomb)
     @bomb = bomb
     @flagged = false
-    @revealed = true
+    @revealed = false
     @neighbor_bombs = 0
   end
 
