@@ -36,17 +36,13 @@ class Board
 
   def render
     line = '  ------------------------------------'
-    puts
-    puts "   #{(0..8).to_a.join('   ')}"
-    puts line
+    puts "\n   #{(0..8).to_a.join('   ')}\n#{line}\n"
     board.each_with_index do |row, idx|
       print idx.to_s
       row.each do |tile|
         print "| #{tile} "
       end
-      print '|'
-      puts
-      puts line
+      print "|\n#{line}\n"
     end
     puts
   end
