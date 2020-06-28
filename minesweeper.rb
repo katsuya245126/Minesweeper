@@ -20,7 +20,6 @@ class Minesweeper
 
       board.reveal(input)
       refresh
-      break
     end
   end
 

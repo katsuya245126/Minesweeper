@@ -47,21 +47,30 @@ class Board
     puts
   end
 
-  def reveal(my_pos)
-    return false if get_tile(my_pos).bomb?
-    return true if neighbor_tiles(my_pos).all? { |tile| tile.revealed? || tile.bomb? }
+  def reveal_algorithm(current_pos)
+    current_tile = get_tile(current_pos)
+    current_tile.reveal
+    return true if current_tile.neighbor_bombs.positive?
 
-    get_tile(my_pos).reveal
-    clean_squares = []
-    neighbor_idx = neighbor_index(my_pos)
+    reveal_neighbor(current_pos)
+    revealable = further_revealable_neighbors(current_pos)
+    return if revealable.empty?
 
-    neighbor_idx.each do |pos|
-      tile = get_tile(pos)
-      tile.reveal unless tile.bomb?
-      clean_squares << pos if clean_square?(tile)
+    revealable.each { |pos| reveal_algorithm(pos) }
+    true
+  end
+
+  def reveal(pos)
+    reveal_bomb?(pos) ? false : reveal_algorithm(pos)
+  end
+
+  def reveal_bomb?(pos)
+    if get_tile(pos).bomb?
+      get_tile(pos).reveal
+      true
+    else
+      false
     end
-
-    clean_squares.all? { |pos| reveal(pos) }
   end
 
   def win?
@@ -77,6 +86,34 @@ class Board
   end
 
   private
+
+  def reveal_tile(pos)
+    tile = get_tile(pos)
+    tile.reveal unless tile.bomb?
+  end
+
+  def further_revealable_tile?(pos)
+    return false if get_tile(pos).neighbor_bombs.positive?
+
+    neighbor_idx = neighbor_index(pos)
+
+    neighbor_idx.any? do |current_pos|
+      tile = get_tile(current_pos)
+      !tile.bomb? && !tile.revealed?
+    end
+  end
+
+  def reveal_neighbor(pos)
+    neighbor_idx = neighbor_index(pos)
+
+    neighbor_idx.each { |position| reveal_tile(position) }
+  end
+
+  def further_revealable_neighbors(pos)
+    neighbor_idx = neighbor_index(pos)
+
+    neighbor_idx.select { |current_pos| further_revealable_tile?(current_pos) }
+  end
 
   def place_bomb(board, num = 9)
     remaining_bombs = num
