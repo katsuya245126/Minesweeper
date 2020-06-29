@@ -81,7 +81,7 @@ class Minesweeper
   def valid_command?(command)
     command.is_a?(String) &&
       command.length == 1 &&
-      (command == 'f' || command == 'r')
+      %w[f r].include?(command)
   end
 
   def win_message
