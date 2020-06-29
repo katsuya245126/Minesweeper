@@ -9,7 +9,7 @@ class Minesweeper
   end
 
   def run
-    until board.win?
+    until board.win? || board.lost?
       refresh
       command = prompt_user_command
       input = prompt_user_coordinate
@@ -19,6 +19,9 @@ class Minesweeper
       when 'f' then board.flag(input)
       end
     end
+
+    refresh
+    board.win? ? win_message : loss_message
   end
 
   private
@@ -79,6 +82,14 @@ class Minesweeper
     command.is_a?(String) &&
       command.length == 1 &&
       (command == 'f' || command == 'r')
+  end
+
+  def win_message
+    puts 'You win!'
+  end
+
+  def loss_message
+    puts 'You revealed a bomb! You lose!'
   end
 
   def refresh
