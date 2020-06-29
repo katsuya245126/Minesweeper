@@ -36,6 +36,10 @@ class Board
     puts
   end
 
+  def flag(pos)
+    get_tile(pos).toggle_flag
+  end
+
   def reveal(pos)
     return ArgumentError unless valid_pos?(pos)
 

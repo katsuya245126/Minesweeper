@@ -11,10 +11,13 @@ class Minesweeper
   def run
     until board.win?
       refresh
+      command = prompt_user_command
+      input = prompt_user_coordinate
 
-      input = prompt_user
-
-      board.reveal(input)
+      case command
+      when 'r' then board.reveal(input)
+      when 'f' then board.flag(input)
+      end
     end
   end
 
@@ -22,25 +25,46 @@ class Minesweeper
 
   attr_reader :board, :player
 
-  def prompt_user
+  def prompt_user_coordinate
     input = nil
 
-    until valid_pos?(input)
+    loop do
       begin
-        input = player.prompt
+        input = player.prompt_coordinate
       rescue ArgumentError
-        input_error
-      else
-        input_error unless valid_pos?(input)
+        nil
       end
+      break if valid_pos?(input)
+
+      coordinate_error
       refresh
     end
 
     input
   end
 
-  def input_error
+  def prompt_user_command
+    command = nil
+
+    loop do
+      command = player.prompt_command
+      break if valid_command?(command)
+
+      command_error
+      refresh
+    end
+
+    command
+  end
+
+  def coordinate_error
     puts 'Invalid input! Make sure to enter two digits between 0-8 with a comma in-between.'
+    print 'Press Enter to continue...'
+    gets
+  end
+
+  def command_error
+    puts 'Invalid command! Type f to flag and r to reveal!'
     print 'Press Enter to continue...'
     gets
   end
@@ -48,8 +72,13 @@ class Minesweeper
   def valid_pos?(pos)
     pos.is_a?(Array) &&
       pos.length == 2 &&
-      pos.all? { |i| i.between?(0, 8) } &&
-      !board.get_tile(pos).revealed?
+      pos.all? { |i| i.between?(0, 8) }
+  end
+
+  def valid_command?(command)
+    command.is_a?(String) &&
+      command.length == 1 &&
+      (command == 'f' || command == 'r')
   end
 
   def refresh

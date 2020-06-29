@@ -24,6 +24,10 @@ class Tile
     @revealed = true
   end
 
+  def toggle_flag
+    @flagged = !@flagged
+  end
+
   def to_s
     if flagged?
       'F'
