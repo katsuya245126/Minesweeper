@@ -1,3 +1,5 @@
+require 'colorize'
+
 class Tile
   attr_accessor :neighbor_bombs
 
@@ -30,11 +32,11 @@ class Tile
 
   def to_s
     if flagged?
-      'F'
+      'F'.colorize(:red)
     elsif revealed?
-      return 'B' if bomb?
+      return 'B'.colorize(:red) if bomb?
 
-      neighbor_bombs != 0 ? neighbor_bombs.to_s : ' '
+      neighbor_bombs != 0 ? colorize_bomb_count(neighbor_bombs) : ' '
     else
       '*'
     end
@@ -43,4 +45,13 @@ class Tile
   private
 
   attr_reader :bomb, :flagged, :revealed
+
+  def colorize_bomb_count(count)
+    case count
+    when 1 then count.to_s.colorize(:blue)
+    when 2 then count.to_s.colorize(:green)
+    when 3 then count.to_s.colorize(:magenta)
+    when 4 then count.to_s.colorize(:cyan)
+    end
+  end
 end
