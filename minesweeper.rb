@@ -11,21 +11,33 @@ class Minesweeper
   def run
     until board.win?
       refresh
-      begin
-        input = player.prompt
-      rescue ArgumentError
-        input_error
-        next
-      end
+
+      input = prompt_user
 
       board.reveal(input)
-      refresh
     end
   end
 
   private
 
   attr_reader :board, :player
+
+  def prompt_user
+    input = nil
+
+    until valid_pos?(input)
+      begin
+        input = player.prompt
+      rescue ArgumentError
+        input_error
+      else
+        input_error unless valid_pos?(input)
+      end
+      refresh
+    end
+
+    input
+  end
 
   def input_error
     puts 'Invalid input! Make sure to enter two digits between 0-8 with a comma in-between.'
