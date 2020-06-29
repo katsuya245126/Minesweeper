@@ -14,10 +14,7 @@ class Minesweeper
       command = prompt_user_command
       input = prompt_user_coordinate
 
-      case command
-      when 'r' then board.reveal(input)
-      when 'f' then board.flag(input)
-      end
+      process_command(command, input)
     end
 
     refresh
@@ -27,6 +24,13 @@ class Minesweeper
   private
 
   attr_reader :board, :player
+
+  def process_command(command, input)
+    case command
+    when 'r' then board.reveal(input)
+    when 'f' then board.flag(input)
+    end
+  end
 
   def prompt_user_coordinate
     input = nil
