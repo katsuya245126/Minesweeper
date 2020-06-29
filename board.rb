@@ -2,25 +2,20 @@ require_relative 'tile.rb'
 
 class Board
   NEIGHBOR_POS = [
-    [-1, -1],
-    [-1, 0],
-    [-1, 1],
-    [0, -1],
-    [0, 1],
-    [1, -1],
-    [1, 0],
-    [1, 1]
+    [-1, 0],    # N
+    [-1, 1],    # NE
+    [0, -1],    # E
+    [0, 1],     # SE
+    [1, -1],    # S
+    [1, 0],     # SW
+    [1, 1],     # W
+    [-1, -1]    # NW
   ].freeze
 
   attr_reader :board
 
   def initialize
     create_board
-  end
-
-  def get_tile(pos)
-    y, x = pos
-    board[y][x]
   end
 
   def render
@@ -59,6 +54,35 @@ class Board
   end
 
   private
+
+  def create_board
+    empty_board = create_empty_board
+    @board = place_bomb(empty_board)
+    set_bomb_counts
+  end
+
+  def create_empty_board
+    board = Array.new(9) { [] }
+    board.each do |row|
+      9.times do
+        row << Tile.new(false)
+      end
+    end
+    board
+  end
+
+  def set_bomb_counts
+    board.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        tile.neighbor_bombs = neighbor_bomb_count([y, x])
+      end
+    end
+  end
+
+  def get_tile(pos)
+    y, x = pos
+    board[y][x]
+  end
 
   def reveal_algorithm(current_pos)
     current_tile = get_tile(current_pos)
@@ -126,14 +150,6 @@ class Board
     bombed_board
   end
 
-  def set_bomb_counts
-    board.each_with_index do |row, y|
-      row.each_with_index do |tile, x|
-        tile.neighbor_bombs = neighbor_bomb_count([y, x])
-      end
-    end
-  end
-
   def neighbor_bomb_count(my_pos)
     neighbor_idx = neighbor_index(my_pos)
     bomb_count = 0
@@ -159,21 +175,5 @@ class Board
   def valid_pos?(pos)
     y, x = pos
     y.between?(0, 8) && x.between?(0, 8)
-  end
-
-  def create_empty_board
-    board = Array.new(9) { [] }
-    board.each do |row|
-      9.times do
-        row << Tile.new(false)
-      end
-    end
-    board
-  end
-
-  def create_board
-    empty_board = create_empty_board
-    @board = place_bomb(empty_board)
-    set_bomb_counts
   end
 end
