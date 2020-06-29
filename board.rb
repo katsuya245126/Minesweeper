@@ -14,19 +14,8 @@ class Board
 
   attr_reader :board
 
-  def self.empty_board
-    board = Array.new(9) { [] }
-    board.each do |row|
-      9.times do
-        row << Tile.new(false)
-      end
-    end
-    board
-  end
-
   def initialize
-    @board = place_bomb(Board.empty_board)
-    set_bomb_counts
+    create_board
   end
 
   def get_tile(pos)
@@ -47,30 +36,10 @@ class Board
     puts
   end
 
-  def reveal_algorithm(current_pos)
-    current_tile = get_tile(current_pos)
-    current_tile.reveal
-    return true if current_tile.neighbor_bombs.positive?
-
-    reveal_neighbor(current_pos)
-    revealable = further_revealable_neighbors(current_pos)
-    return if revealable.empty?
-
-    revealable.each { |pos| reveal_algorithm(pos) }
-    true
-  end
-
   def reveal(pos)
-    reveal_bomb?(pos) ? false : reveal_algorithm(pos)
-  end
+    return ArgumentError unless valid_pos?(pos)
 
-  def reveal_bomb?(pos)
-    if get_tile(pos).bomb?
-      get_tile(pos).reveal
-      true
-    else
-      false
-    end
+    reveal_bomb?(pos) ? false : reveal_algorithm(pos)
   end
 
   def win?
@@ -86,6 +55,28 @@ class Board
   end
 
   private
+
+  def reveal_algorithm(current_pos)
+    current_tile = get_tile(current_pos)
+    current_tile.reveal
+    return true if current_tile.neighbor_bombs.positive?
+
+    reveal_neighbor(current_pos)
+    revealable = further_revealable_neighbors(current_pos)
+    return if revealable.empty?
+
+    revealable.each { |pos| reveal_algorithm(pos) }
+    true
+  end
+
+  def reveal_bomb?(pos)
+    if get_tile(pos).bomb?
+      get_tile(pos).reveal
+      true
+    else
+      false
+    end
+  end
 
   def reveal_tile(pos)
     tile = get_tile(pos)
@@ -151,15 +142,6 @@ class Board
     bomb_count
   end
 
-  def neighbor_tiles(my_pos)
-    neighbor_idx = neighbor_index(my_pos)
-
-    neighbor_idx.map do |pos|
-      y, x = pos
-      board[y][x]
-    end
-  end
-
   def neighbor_index(my_pos)
     neighbor_idx = NEIGHBOR_POS.dup.map do |pos|
       y, x = pos
@@ -175,7 +157,19 @@ class Board
     y.between?(0, 8) && x.between?(0, 8)
   end
 
-  def clean_square?(tile)
-    tile.to_s == ' '
+  def create_empty_board
+    board = Array.new(9) { [] }
+    board.each do |row|
+      9.times do
+        row << Tile.new(false)
+      end
+    end
+    board
+  end
+
+  def create_board
+    empty_board = create_empty_board
+    @board = place_bomb(empty_board)
+    set_bomb_counts
   end
 end
