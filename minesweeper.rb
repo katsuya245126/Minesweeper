@@ -1,3 +1,4 @@
+require 'yaml'
 require_relative 'board.rb'
 require_relative 'player.rb'
 
@@ -12,9 +13,8 @@ class Minesweeper
     until board.win? || board.lost?
       refresh
       command = prompt_user_command
-      input = prompt_user_coordinate
 
-      process_command(command, input)
+      process_command(command)
     end
 
     refresh
@@ -25,11 +25,34 @@ class Minesweeper
 
   attr_reader :board, :player
 
-  def process_command(command, input)
+  def process_command(command)
     case command
-    when 'r' then board.reveal(input)
-    when 'f' then board.flag(input)
+    when 'r'
+      input = prompt_user_coordinate
+      board.reveal(input)
+    when 'f'
+      input = prompt_user_coordinate
+      board.flag(input)
+    when 's' then save
+    when 'l' then load
+    when 'q' then quit
     end
+  end
+
+  def save
+    file_name = player.prompt_file_name
+
+    File.open("#{file_name}.yml", 'w') { |file| file.write(board.to_yaml) }
+  end
+
+  def load
+    file_path = player.prompt_file_path
+
+    @board = YAML.load(File.read(file_path))
+  end
+
+  def quit
+    abort('Exiting program...')
   end
 
   def prompt_user_coordinate
@@ -85,7 +108,7 @@ class Minesweeper
   def valid_command?(command)
     command.is_a?(String) &&
       command.length == 1 &&
-      %w[f r].include?(command)
+      %w[r f s l q].include?(command)
   end
 
   def win_message

@@ -11,6 +11,20 @@ class Player
     parse_coordinate(input)
   end
 
+  def prompt_file_name
+    prompt_file_name_message
+    input = gets.chomp
+    input
+  end
+
+  def prompt_file_path
+    prompt_file_path_message
+    input = gets.chomp
+    input
+  end
+
+  private
+
   def parse_coordinate(string)
     string.split(',').map { |ele| Integer(ele) }
   end
@@ -20,6 +34,15 @@ class Player
   end
 
   def prompt_command_message
-    print 'Reveal(r) or Flag(f): '
+    puts 'Reveal(r) | Flag(f) | Save(s) | Load(l) | Quit(q)'
+    print 'Enter a command: '
+  end
+
+  def prompt_file_name_message
+    print 'Enter a name for save file: '
+  end
+
+  def prompt_file_path_message
+    print 'Enter file path: '
   end
 end
