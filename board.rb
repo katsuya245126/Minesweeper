@@ -32,7 +32,8 @@ class Board
   end
 
   def flag(pos)
-    get_tile(pos).toggle_flag
+    tile = get_tile(pos)
+    tile.toggle_flag unless tile.revealed?
   end
 
   def reveal(pos)
