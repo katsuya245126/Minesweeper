@@ -47,8 +47,13 @@ class Minesweeper
 
   def load
     file_path = player.prompt_file_path
-
-    @board = YAML.load(File.read(file_path))
+    begin
+      @board = YAML.load(File.read(file_path))
+    rescue Errno::ENOENT
+      puts 'No such file or directory!'
+      print 'press Enter to continue...'
+      gets
+    end
   end
 
   def quit
@@ -57,7 +62,6 @@ class Minesweeper
 
   def prompt_user_coordinate
     input = nil
-
     loop do
       begin
         input = player.prompt_coordinate
@@ -94,7 +98,7 @@ class Minesweeper
   end
 
   def command_error
-    puts 'Invalid command! Type f to flag and r to reveal!'
+    puts 'Invalid command!'
     print 'Press Enter to continue...'
     gets
   end
@@ -123,4 +127,9 @@ class Minesweeper
     system('clear')
     board.render
   end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  game = Minesweeper.new
+  game.run
 end
